@@ -1,0 +1,37 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+.venv/
+env/
+venv/
+
+# Data output directories (you can keep these local only)
+data_processed/
+data_not_processed/
+sample_output/
+*.log
+
+# OS / Editor files
+.DS_Store
+.idea/
+.vscode/
+
+# Session logs
+new_sessions_added.txt
+
+# Python cache or history
+*.pyc
+*.pkl
+*.sqlite
+.history
+
+# Jupyter notebook checkpoints (just in case)
+.ipynb_checkpoints/
+
+# Zips or temp files
+*.zip
+*.tmp
+
