@@ -1,6 +1,5 @@
 import os
 import json
-import shutil
 from pathlib import Path
 from datetime import datetime
 from handlers.bill import handle_bill
@@ -13,9 +12,9 @@ from utils.interactive import clear_output_folder
 # -------------------------
 # CONFIGURATION
 # -------------------------
-INPUT_FOLDER = "sample_input_files"
 BASE_FOLDER = Path(__file__).resolve().parent
-PROJECT_ROOT = Path(BASE_FOLDER) / "open_civic_data_blockchain"
+INPUT_FOLDER = Path(BASE_FOLDER) / "sample_input_files"
+PROJECT_ROOT = Path(BASE_FOLDER) / "SAMPLE_OUTPUT_open_civic_data_blockchain_run"
 ERROR_FOLDER = PROJECT_ROOT / "data_not_processed"
 OUTPUT_FOLDER = PROJECT_ROOT / "data_processed"
 SESSION_LOG_PATH = PROJECT_ROOT / "new_sessions_added.txt"
@@ -98,11 +97,13 @@ def process_and_save(data, output_folder, error_folder):
                 continue
 
         if "bill_" in filename:
-            handle_bill(content, session_folder, output_folder)
+            handle_bill(content, session_folder, output_folder, error_folder, filename)
         elif "vote_event_" in filename:
-            handle_vote_event(content, session_folder, output_folder)
+            handle_vote_event(
+                content, session_folder, output_folder, error_folder, filename
+            )
         else:
-            handle_other(content, session_folder, output_folder)
+            handle_other(content, session_folder, output_folder, error_folder, filename)
 
     print("\n✅ File processing complete.")
 
