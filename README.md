@@ -31,6 +31,31 @@ open_civic_data_blockchain/
 
 ---
 
+# Sample Input Files
+
+This folder contains a curated set of real legislative JSON files sourced from public government data.
+
+These files are used to:
+- ✅ Demonstrate successful processing (e.g. valid bills and vote events)
+- ⚠️ Trigger and test error handling pathways (e.g. missing fields, unknown sessions, malformed JSON)
+
+---
+
+## File Categories
+
+- `bill_*.json` and `vote_event_*.json` — Real-world examples of structured legislative data
+- Files missing keys like `identifier`, `bill_identifier`, or `legislative_session` — included intentionally to test how the system routes malformed files to `data_not_processed/`
+- One intentionally malformed JSON file (`bad_json.json`) is included to verify `JSONDecodeError` handling
+
+---
+
+## Notes
+
+- All data comes from public sources and contains no private or sensitive information.
+- You can run the pipeline with this folder to see both success and failure paths in action.
+
+---
+
 ## Getting Started
 
 Make sure you have **Python 3.9+** installed.

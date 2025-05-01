@@ -11,7 +11,6 @@ venv/
 # Data output directories (you can keep these local only)
 IL_openstates/
 sample-input-files
-sample_input_files
 data_processed/
 data_not_processed/
 sample_output/
