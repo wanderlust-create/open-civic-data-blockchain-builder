@@ -12,7 +12,7 @@ This project parses civic legislative JSON files and saves them into a blockchai
 - 🧱 Organizes output by session, chamber, and bill identifier
 - 🗃️ Logs every processing step to `data_processed/` and error cases to `data_not_processed/`
 - 🧾 Auto-creates placeholder files when votes reference missing bills
-- 🧠 Prompts user for missing `legislative_session` (optional toggle)
+- 🧠 Prompts user for missing legislative_session (optional toggle), enabling real-time error correction without restarting the script
 - 📝 Tracks new sessions entered via prompt in `new_sessions_added.txt`
 - 🔧 Modular file structure using `handlers/`, `utils/`, and `main.py`
 
@@ -78,6 +78,6 @@ This tool is ideal for projects that aim to:
 
 ## 🛡 License
 
-Distributed under the [MIT License](LICENSE).
-Free to use, modify, and build upon.
-Because civic data belongs to the people.
+Distributed under the [MIT License](LICENSE).\
+Free to use, modify, and build upon.\
+Civic data belongs to the people.
