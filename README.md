@@ -71,7 +71,8 @@ This tool is ideal for projects that aim to:
 - **Tamara Dowis**
   [GitHub](https://github.com/wanderlust-create) | [LinkedIn](https://www.linkedin.com/in/tamara-dowis/)
 - 🤖 With pair programming support from her AI assistant “Hypatia” (powered by ChatGPT)
-  Created for the Chicago-based *Windy Civi* civic tech community 🏛️
+
+*Created for the Chicago-based *Windy Civi* civic tech community 🏛️*
 
 ---
 
