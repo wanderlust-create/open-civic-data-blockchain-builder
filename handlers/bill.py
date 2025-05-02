@@ -1,19 +1,24 @@
 from pathlib import Path
 import json
-from utils.file_utils import format_timestamp, record_error_file
+from utils.file_utils import format_timestamp, record_error_file, write_action_logs
 
 
 def handle_bill(content, session_folder, output_folder, error_folder, filename):
     """
-    Handles bill JSON files. Saves the file using a timestamp derived from the bill's earliest action.
-    Logs and skips if the bill is missing an identifier.
+        Handles a bill JSON file by saving:
+
+    1. A full snapshot of the bill in logs/ using the earliest action date
+    2. One separate JSON file per action in logs/, each timestamped and slugified
+    3. A files/ directory placeholder (created but not populated here)
+
+    Skips and logs errors if required fields (e.g. identifier) are missing.
 
     Args:
-        content (dict): The parsed JSON for the bill.
-        session_folder (str): The mapped folder name for the session (e.g. '2023-2024').
-        output_folder (Path): Path to the processed data root folder.
-        error_folder (Path): Path to the not-processed data root folder.
-        filename (str): The original filename for logging and recovery.
+        content (dict): The parsed bill JSON object.
+        session_folder (str): The folder name for the legislative session (e.g. "2023-2024").
+        output_folder (Path): Base path where processed data should be saved.
+        error_folder (Path): Base path where unprocessable files should be routed.
+        filename (str): The original filename (used in logs and error tracking).
     """
     bill_identifier = content.get("identifier")
     if not bill_identifier:
@@ -52,8 +57,13 @@ def handle_bill(content, session_folder, output_folder, error_folder, filename):
         print(f"⚠️ Warning: Bill {bill_identifier} missing action dates")
         timestamp = "unknown"
 
-    filename = f"{timestamp}_bill_created.json"
-    output_file = save_path.joinpath("logs", filename)
+    # Save entire bill
+    full_filename = f"{timestamp}_entire_bill.json"
+    output_file = save_path.joinpath("logs", full_filename)
     with open(output_file, "w", encoding="utf-8") as f:
         json.dump(content, f, indent=2)
     print(f"✅ Saved bill {bill_identifier}")
+
+    # Save each action as a separate file
+    if actions:
+        write_action_logs(actions, bill_identifier, save_path / "logs")
