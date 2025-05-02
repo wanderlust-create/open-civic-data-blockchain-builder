@@ -1,20 +1,24 @@
 from pathlib import Path
 import json
 
-from utils.file_utils import format_timestamp, record_error_file
+from utils.file_utils import format_timestamp, record_error_file, write_vote_event_log
 
 
 def handle_vote_event(content, session_folder, output_folder, error_folder, filename):
     """
-    Handles vote event files by routing them into the appropriate bill folder.
-    If the referenced bill does not yet exist, a placeholder is created.
-    Logs and skips files missing a bill_identifier.
+    Handles a vote_event JSON file by:
+
+    1. Creating the associated bill folder (and placeholder if missing)
+    2. Saving the full vote_event as a timestamped log file using result info
+       Format: YYYYMMDDT000000Z_vote_event_<result>.json
+
+    Skips and logs errors if bill_identifier is missing.
 
     Args:
         content (dict): Parsed JSON vote event.
-        session_folder (str): Session folder (e.g., "2023-2024").
-        output_folder (Path): Path to processed data root.
-        error_folder (Path): Path to not-processed data root.
+        session_folder (str): Folder name for the legislative session.
+        output_folder (Path): Base path for processed output.
+        error_folder (Path): Base path for logging unprocessable files.
         filename (str): Original filename (used in logs).
     """
     referenced_bill_id = content.get("bill_identifier")
@@ -43,6 +47,7 @@ def handle_vote_event(content, session_folder, output_folder, error_folder, file
     (save_path / "logs").mkdir(parents=True, exist_ok=True)
     (save_path / "files").mkdir(parents=True, exist_ok=True)
 
+    # Add placeholder if bill doesn't exist
     placeholder_file = save_path / "placeholder.json"
     if not placeholder_file.exists():
         placeholder_content = {"identifier": referenced_bill_id, "placeholder": True}
@@ -50,16 +55,8 @@ def handle_vote_event(content, session_folder, output_folder, error_folder, file
             json.dump(placeholder_content, f, indent=2)
         print(f"📝 Created placeholder for missing bill {referenced_bill_id}")
 
-    start_date = content.get("start_date")
-    timestamp = format_timestamp(start_date) if start_date else None
-
-    if not timestamp:
-        print(f"⚠️ Warning: Vote event missing start_date")
-        timestamp = "unknown"
-
-    file_id = content.get("_id", "unknown_id")
-    filename = f"{timestamp}_vote_event.json"
-    output_file = save_path.joinpath("logs", filename)
-    with open(output_file, "w", encoding="utf-8") as f:
-        json.dump(content, f, indent=2)
-    print(f"✅ Saved vote event {file_id} under bill {referenced_bill_id}")
+    # Save the full vote_event log
+    write_vote_event_log(content, referenced_bill_id, save_path / "logs")
+    print(
+        f"✅ Saved vote event {content.get('_id', 'unknown_id')} under bill {referenced_bill_id}"
+    )
