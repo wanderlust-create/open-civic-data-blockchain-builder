@@ -13,8 +13,8 @@ from utils.interactive import clear_output_folder
 # CONFIGURATION
 # -------------------------
 BASE_FOLDER = Path(__file__).resolve().parent
-INPUT_FOLDER = Path(BASE_FOLDER) / "IL_openstates"
-PROJECT_ROOT = Path(BASE_FOLDER) / "FULL_open_civic_data_blockchain_run"
+INPUT_FOLDER = Path(BASE_FOLDER) / "sample_input_files"
+PROJECT_ROOT = Path(BASE_FOLDER) / "SAMPLE_open_civic_data_blockchain_run"
 ERROR_FOLDER = PROJECT_ROOT / "data_not_processed"
 OUTPUT_FOLDER = PROJECT_ROOT / "data_processed"
 SESSION_LOG_PATH = PROJECT_ROOT / "new_sessions_added.txt"
