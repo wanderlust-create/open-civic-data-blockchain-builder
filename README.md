@@ -85,7 +85,8 @@ This tool is ideal for projects that aim to:
 
 ## Coming Soon
 
-- [ ] One file per action for each bill (for real-time bill tracking)
+This project aims to be a reusable, modular template for civic data archiving — something other civic tech teams can easily copy and adapt for their own state or dataset.
+
 - [ ] Optional archiving of placeholder files once resolved
 - [ ] CLI flags for batch vs interactive modes
 
@@ -93,16 +94,16 @@ This tool is ideal for projects that aim to:
 
 ## 👩🏽‍💻 Contributors
 
-- **Tamara Dowis**
-  [GitHub](https://github.com/wanderlust-create) | [LinkedIn](https://www.linkedin.com/in/tamara-dowis/)
+- **Tamara Dowis**  
+  [GitHub](https://github.com/wanderlust-create) | [LinkedIn](https://www.linkedin.com/in/tamara-dowis/)  
 - 🤖 With pair programming support from her AI assistant “Hypatia” (powered by ChatGPT)
 
-*Created for the Chicago-based *Windy Civi* civic tech community* 🏛️
+*Created for the Chicago-based Windy Civi civic tech community* 🏛️
 
 ---
 
 ## 🛡 License
 
-Distributed under the [MIT License](LICENSE).\
-Free to use, modify, and build upon.\
+Distributed under the [MIT License](LICENSE).  
+Free to use, modify, and build upon.  
 Civic data belongs to the people.
