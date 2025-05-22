@@ -14,7 +14,7 @@ from utils.interactive import prompt_for_session_fix, clear_output_folder
 # CONFIGURATION (generic)
 # -------------------------
 
-STATE_ABBR = "tx"
+STATE_ABBR = "il"
 BASE_FOLDER = Path(__file__).resolve().parent
 INPUT_FOLDER = BASE_FOLDER / "sample_scraped_data" / STATE_ABBR
 STATE_FOLDER = BASE_FOLDER / "blockchain" / STATE_ABBR
