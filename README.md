@@ -8,13 +8,13 @@ This project parses civic legislative JSON files and saves them into a blockchai
 
 ## Features
 
-- 📂 Saves each bill and vote event into timestamped `.json` files
-- 🧱 Organizes output by session, chamber, and bill identifier
-- 🗃️ Logs every processing step to `data_processed/` and error cases to `data_not_processed/`
-- 🧾 Auto-creates placeholder files when votes reference missing bills
-- 🧠 Prompts user for missing legislative_session (optional toggle), enabling real-time error correction without restarting the script
-- 📝 Tracks new sessions entered via prompt in `new_sessions_added.txt`
-- 🔧 Modular file structure using `handlers/`, `utils/`, and `main.py`
+* 📂 Saves each bill and vote event into timestamped `.json` files
+* 🧱 Organizes output by session, chamber, and bill identifier
+* 🗃️ Logs every processing step to `data_processed/` and error cases to `data_not_processed/`
+* 🗓️ Auto-creates placeholder files when votes reference missing bills
+* 🧠 Prompts user for missing legislative\_session (optional toggle), enabling real-time error correction without restarting the script
+* 📝 Tracks new sessions entered via prompt in `new_sessions_added.txt`
+* 🔧 Modular file structure using `handlers/`, `utils/`, and `main.py`
 
 ---
 
@@ -36,23 +36,24 @@ open_civic_data_blockchain/
 This folder contains a curated set of real legislative JSON files sourced from public government data.
 
 These files are used to:
-- ✅ Demonstrate successful processing (e.g. valid bills and vote events)
-- ⚠️ Trigger and test error handling pathways (e.g. missing fields, unknown sessions, malformed JSON)
+
+* ✅ Demonstrate successful processing (e.g. valid bills and vote events)
+* ⚠️ Trigger and test error handling pathways (e.g. missing fields, unknown sessions, malformed JSON)
 
 ---
 
 ## File Categories
 
-- `bill_*.json` and `vote_event_*.json` — Real-world examples of structured legislative data
-- Files missing keys like `identifier`, `bill_identifier`, or `legislative_session` — included intentionally to test how the system routes malformed files to `data_not_processed/`
-- One intentionally malformed JSON file (`bad_json.json`) is included to verify `JSONDecodeError` handling
+* `bill_*.json` and `vote_event_*.json` — Real-world examples of structured legislative data
+* Files missing keys like `identifier`, `bill_identifier`, or `legislative_session` — included intentionally to test how the system routes malformed files to `data_not_processed/`
+* One intentionally malformed JSON file (`bad_json.json`) is included to verify `JSONDecodeError` handling
 
 ---
 
 ## Notes
 
-- All data comes from public sources and contains no private or sensitive information.
-- You can run the pipeline with this folder to see both success and failure paths in action.
+* All data comes from public sources and contains no private or sensitive information.
+* You can run the pipeline with this folder to see both success and failure paths in action.
 
 ---
 
@@ -76,10 +77,10 @@ If a file is missing a `legislative_session`, you can optionally enter a valid s
 
 This tool is ideal for projects that aim to:
 
-- Archive legislative activity in a structured, tamper-evident way
-- Monitor new actions on bills in real time
-- Provide visibility into vote events tied to specific legislation
-- Support civic engagement and open government initiatives
+* Archive legislative activity in a structured, tamper-evident way
+* Monitor new actions on bills in real time
+* Provide visibility into vote events tied to specific legislation
+* Support civic engagement and open government initiatives
 
 ---
 
@@ -87,23 +88,23 @@ This tool is ideal for projects that aim to:
 
 This project aims to be a reusable, modular template for civic data archiving — something other civic tech teams can easily copy and adapt for their own state or dataset.
 
-- [ ] Optional archiving of placeholder files once resolved
-- [ ] CLI flags for batch vs interactive modes
+* [ ] Optional archiving of placeholder files once resolved
+* [ ] CLI flags for batch vs interactive modes
 
 ---
 
 ## 👩🏽‍💻 Contributors
 
-- **Tamara Dowis**  
-  [GitHub](https://github.com/wanderlust-create) | [LinkedIn](https://www.linkedin.com/in/tamara-dowis/)  
-- 🤖 With pair programming support from her AI assistant “Hypatia” (powered by ChatGPT)
+* **Tamara Dowis**
+  [GitHub](https://github.com/wanderlust-create) | [LinkedIn](https://www.linkedin.com/in/tamara-dowis/)
+* 🤖 With pair programming support from her AI assistant “Hypatia” (powered by ChatGPT)
 
-*Created for the Chicago-based Windy Civi civic tech community* 🏛️
+*Created for the Chicago-based Windy Civi civic tech community* 🏩
 
 ---
 
 ## 🛡 License
 
-Distributed under the [MIT License](LICENSE).  
-Free to use, modify, and build upon.  
+Distributed under the [MIT License](LICENSE).
+Free to use, modify, and build upon.
 Civic data belongs to the people.
