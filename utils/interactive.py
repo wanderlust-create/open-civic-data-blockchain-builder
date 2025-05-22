@@ -2,12 +2,19 @@ import os
 import shutil
 from pathlib import Path
 
+
 def clear_output_folder(output_folder):
     """
     Interactively clears the given output folder after confirming with the user.
-    Prevents accidental deletion by requiring 'yes' confirmation.
+    Accepts common positive confirmations: yes, y, yeah, sure, ok.
     """
+    POSITIVE_RESPONSES = {"yes", "y", "yeah", "sure", "ok"}
+
+    print(
+        f"Checking if path exists: {output_folder} -> {os.path.exists(output_folder)}"
+    )
     if os.path.exists(output_folder):
+        print("✅ Path exists — proceeding to delete.")
         confirm = (
             input(
                 f"⚠️ This will delete everything in {output_folder}. Are you sure? (yes/no): "
@@ -15,11 +22,14 @@ def clear_output_folder(output_folder):
             .strip()
             .lower()
         )
-        if confirm == "yes":
+        if confirm in POSITIVE_RESPONSES:
             shutil.rmtree(output_folder)
             print(f"🧹 Cleared existing output folder: {output_folder}")
         else:
             print("🛑 Aborted clearing output folder.")
+    else:
+        print("❌ Path does not exist — skipping deletion.")
+
 
 def prompt_for_session_fix(filename, original_session_name, log_path=None):
     """
