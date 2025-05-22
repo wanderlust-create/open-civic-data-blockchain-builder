@@ -8,13 +8,11 @@ __pycache__/
 env/
 venv/
 
-# Data output directories (you can keep these local only)
-IL_openstates/
-sample-input-files
-data_processed/
-data_not_processed/
-sample_output/
+# Data directories (you can keep these local only)
 *.log
+scraped_state_data
+sample_scraped_data
+data_output
 
 # OS / Editor files
 .DS_Store
