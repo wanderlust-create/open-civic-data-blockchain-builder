@@ -1,3 +1,10 @@
+"""
+TEMPLATE FILE — COPY THIS TO YOUR STATE FOLDER
+
+This is a reference implementation of a handler for bill data.
+Customize it for your state's data structure and session logic.
+"""
+
 from pathlib import Path
 import json
 from utils.file_utils import format_timestamp, record_error_file, write_action_logs
