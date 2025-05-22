@@ -8,13 +8,13 @@ This project parses civic legislative JSON files and saves them into a blockchai
 
 ## Features
 
-* 📂 Saves each bill and vote event into timestamped `.json` files
-* 🧱 Organizes output by session, chamber, and bill identifier
-* 🗃️ Logs every processing step to `data_processed/` and error cases to `data_not_processed/`
-* 🗓️ Auto-creates placeholder files when votes reference missing bills
-* 🧠 Prompts user for missing legislative\_session (optional toggle), enabling real-time error correction without restarting the script
-* 📝 Tracks new sessions entered via prompt in `new_sessions_added.txt`
-* 🔧 Modular file structure using `handlers/`, `utils/`, and `main.py`
+* Saves each bill and vote event into timestamped `.json` files
+* Organizes output by session, chamber, and bill identifier
+* Logs every processing step to `data_processed/` and error cases to `data_not_processed/`
+* Auto-creates placeholder files when votes reference missing bills
+* Prompts user for missing legislative\_session (optional toggle), enabling real-time error correction without restarting the script
+* Tracks new sessions entered via prompt in `new_sessions_added.txt`
+* Modular file structure using `handlers/`, `utils/`, and per-state `blockchain/{state}` folders
 
 ---
 
@@ -22,60 +22,87 @@ This project parses civic legislative JSON files and saves them into a blockchai
 
 ```plaintext
 open_civic_data_blockchain/
-├── data_processed/           # Successfully parsed, structured output
-├── data_not_processed/       # Skipped/error files categorized by reason
-├── main.py                   # Entry point script
-├── handlers/                 # Handlers for each data type
-├── utils/                    # Helper functions, prompts, config
+├── blockchain/                 # State-specific logic (TX, IL, etc.)
+│   └── tx/
+│       ├── bills.py
+│       ├── votes.py
+│       ├── events.py
+│       ├── session_index.py
+│       ├── organizations.py
+│       └── jurisdiction.py
+├── data_output/                # Created dynamically per run
+│   └── tx/
+│       ├── data_processed/
+│       │   └── country:us/state:tx/sessions/ocd-session/...
+│       └── data_not_processed/
+│           └── from_<error_context>/...
+├── handlers/                   # Templates for copying into each state
+│   ├── bill_template.py
+│   ├── vote_event_template.py
+│   └── other_template.py
+├── sample_scraped_data/
+│   ├── il/
+│   └── tx/
+├── utils/
+│   ├── file_utils.py
+│   └── interactive.py
+├── main.py                     # Entry point
+└── README.md
 ```
 
 ---
 
-# Sample Input Files
+## Output Structure
 
-This folder contains a curated set of real legislative JSON files sourced from public government data.
+Bill output example:
 
-These files are used to:
+```plaintext
+data_output/
+└── il/
+    └── data_processed/
+        └── country:us/
+            └── state:il/
+                └── sessions/
+                    └── ocd-session/
+                        └── country:us/
+                            └── AM1030479/
+                                ├── logs/
+                                │   ├── 20250123T000000Z_entire_bill.json
+                                │   ├── 20250306T000000Z_vote_event_pass.json
+                                │   └── ...
+                                └── files/  # reserved for attachments
+```
 
-* ✅ Demonstrate successful processing (e.g. valid bills and vote events)
-* ⚠️ Trigger and test error handling pathways (e.g. missing fields, unknown sessions, malformed JSON)
+Unprocessed output example:
 
----
-
-## File Categories
-
-* `bill_*.json` and `vote_event_*.json` — Real-world examples of structured legislative data
-* Files missing keys like `identifier`, `bill_identifier`, or `legislative_session` — included intentionally to test how the system routes malformed files to `data_not_processed/`
-* One intentionally malformed JSON file (`bad_json.json`) is included to verify `JSONDecodeError` handling
-
----
-
-## Notes
-
-* All data comes from public sources and contains no private or sensitive information.
-* You can run the pipeline with this folder to see both success and failure paths in action.
+```plaintext
+data_output/
+└── il/
+    └── data_not_processed/
+        ├── from_handle_bill_missing_identifier/
+        ├── from_load_json_not_json/
+        └── from_process_and_save_missing_legislative_session/
+```
 
 ---
 
 ## Getting Started
 
-Make sure you have **Python 3.9+** installed.
+1. Ensure you have **Python 3.9+**
+2. Clone the repo
+3. Add your scraped `.json` files to `sample_scraped_data/{state}/`
 
-Clone the repo and run:
+Run the pipeline:
 
 ```bash
 python main.py
 ```
 
-You’ll be prompted before clearing any output folders.
-
-If a file is missing a `legislative_session`, you can optionally enter a valid session name interactively (e.g., `"104th"`), and the script will continue processing.
+You'll be prompted before clearing output directories. Missing sessions will prompt for manual mapping and be saved to `new_sessions_added.txt`.
 
 ---
 
 ## Example Use Cases
-
-This tool is ideal for projects that aim to:
 
 * Archive legislative activity in a structured, tamper-evident way
 * Monitor new actions on bills in real time
@@ -86,20 +113,19 @@ This tool is ideal for projects that aim to:
 
 ## Coming Soon
 
-This project aims to be a reusable, modular template for civic data archiving — something other civic tech teams can easily copy and adapt for their own state or dataset.
-
 * [ ] Optional archiving of placeholder files once resolved
 * [ ] CLI flags for batch vs interactive modes
+* [ ] Scheduled Docker-based ingestion with auto-push to GitHub
 
 ---
 
-## 👩🏽‍💻 Contributors
+## 👩‍💻 Contributors
 
 * **Tamara Dowis**
   [GitHub](https://github.com/wanderlust-create) | [LinkedIn](https://www.linkedin.com/in/tamara-dowis/)
-* 🤖 With pair programming support from her AI assistant “Hypatia” (powered by ChatGPT)
+* 🤖 With pair programming support from her AI assistant "Hypatia" (powered by ChatGPT)
 
-*Created for the Chicago-based Windy Civi civic tech community* 🏩
+Created for the Chicago-based Windy Civi civic tech community 🏩
 
 ---
 
