@@ -4,7 +4,7 @@ import json
 from utils.file_utils import format_timestamp, record_error_file, write_vote_event_log
 
 
-def handle_vote_event(content, session_folder, output_folder, error_folder, filename):
+def handle_vote_event(STATE_ABBR, content, session_folder, output_folder, error_folder, filename):
     """
     Handles a vote_event JSON file by:
 
@@ -34,12 +34,12 @@ def handle_vote_event(content, session_folder, output_folder, error_folder, file
         return
 
     save_path = Path(output_folder).joinpath(
-        "country:us",
-        "state:il",
+        f"country:us",
+        f"state:{STATE_ABBR}",
         "sessions",
         "ocd-session",
-        "country:us",
-        "state:il",
+        f"country:us",
+        f"state:{STATE_ABBR}",
         session_folder,
         "bills",
         referenced_bill_id,

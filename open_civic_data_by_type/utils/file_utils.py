@@ -2,6 +2,7 @@ import re
 from datetime import datetime
 import json
 from pathlib import Path
+import requests
 
 
 def format_timestamp(date_str):
@@ -10,6 +11,70 @@ def format_timestamp(date_str):
         return dt.strftime("%Y%m%dT%H%M%SZ")
     except Exception:
         return None
+
+
+def extract_session_mapping(jurisdiction_data):
+    """
+    Extracts {identifier: name} from legislative_sessions.
+    """
+    return {
+        session["identifier"]: session["name"]
+        for session in jurisdiction_data.get("legislative_sessions", [])
+        if "identifier" in session and "name" in session
+    }
+
+
+def ensure_session_mapping(state_abbr, base_path, input_folder):
+    """
+    Ensures sessions/{state_abbr}.json exists.
+    - If jurisdiction_*.json is found, extract and overwrite session cache.
+    - If not found, fallback to OpenStates API only if cache doesn't already exist.
+    """
+    session_cache_path = base_path / "sessions" / f"{state_abbr}.json"
+    sessions_folder = base_path / "sessions"
+    sessions_folder.mkdir(parents=True, exist_ok=True)
+
+    # 1. Look for jurisdiction file
+    jurisdiction_files = list(Path(input_folder).glob("jurisdiction_*.json"))
+    if jurisdiction_files:
+        print(f"🔍 Found jurisdiction file — updating sessions/{state_abbr}.json")
+        with open(jurisdiction_files[0], "r", encoding="utf-8") as f:
+            jurisdiction_data = json.load(f)
+        session_mapping = extract_session_mapping(jurisdiction_data)
+        if session_mapping:
+            with open(session_cache_path, "w", encoding="utf-8") as f:
+                json.dump(session_mapping, f, indent=2)
+            print(f"📥 Wrote extracted session mapping to sessions/{state_abbr}.json")
+            return session_mapping
+
+    # 2. If no jurisdiction file, use existing session cache if it exists
+    if session_cache_path.exists():
+        print(f"✔️ Using existing sessions/{state_abbr}.json")
+        with open(session_cache_path, "r", encoding="utf-8") as f:
+            return json.load(f)
+
+    # 3. Fallback: fetch from OpenStates API
+    print(f"🌐 Fetching session list from OpenStates API")
+    url = f"https://v3.openstates.org/jurisdictions/{state_abbr}/sessions"
+    try:
+        response = requests.get(url, timeout=10)
+        if response.status_code == 200:
+            sessions = response.json()
+            session_mapping = {
+                s["identifier"]: s["name"]
+                for s in sessions
+                if "identifier" in s and "name" in s
+            }
+            with open(session_cache_path, "w", encoding="utf-8") as f:
+                json.dump(session_mapping, f, indent=2)
+            print(f"✅ Wrote session mapping to sessions/{state_abbr}.json")
+            return session_mapping
+        else:
+            print(f"⚠️ Failed to fetch sessions (status {response.status_code})")
+    except Exception as e:
+        print(f"❌ Error fetching sessions: {e}")
+
+    return {}
 
 
 def record_error_file(
