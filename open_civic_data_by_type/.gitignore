@@ -11,6 +11,7 @@ venv/
 # Data directories (you can keep these local only)
 *.log
 scraped_state_data
+data_output/
 
 # OS / Editor files
 .DS_Store

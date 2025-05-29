@@ -1,28 +1,48 @@
 from pathlib import Path
 import json
+import requests
+
 from utils.file_utils import format_timestamp, record_error_file, write_action_logs
 
 
-def handle_bill(content, session_folder, output_folder, error_folder, filename):
+def download_bill_pdf(content, files_dir):
+    documents = content.get("documents", [])
+    for doc in documents:
+        url = doc.get("url")
+        if url and url.endswith(".pdf"):
+            try:
+                response = requests.get(url, timeout=10)
+                if response.status_code == 200:
+                    filename = (
+                        doc.get("note", "bill_document").replace(" ", "_").lower()
+                        + ".pdf"
+                    )
+                    with open(files_dir / filename, "wb") as f:
+                        f.write(response.content)
+                    print(f"📄 Downloaded PDF: {filename}")
+                else:
+                    print(
+                        f"⚠️ Failed to download PDF: {url} (status {response.status_code})"
+                    )
+            except Exception as e:
+                print(f"❌ Error downloading PDF: {url} ({e})")
+
+
+def handle_bill(
+    STATE_ABBR, content, session_folder, output_folder, error_folder, filename
+):
     """
     Handles a bill JSON file by saving:
 
     1. A full snapshot of the bill in logs/ using the earliest action date
     2. One separate JSON file per action in logs/, each timestamped and slugified
-    3. A files/ directory placeholder (created but not populated here)
+    3. A files/ directory, with any linked PDFs downloaded
 
     Skips and logs errors if required fields (e.g. identifier) are missing.
-
-    Args:
-        content (dict): The parsed bill JSON object.
-        session_folder (str): The folder name for the legislative session (e.g. "2023").
-        output_folder (Path): Base path where processed data should be saved.
-        error_folder (Path): Base path where unprocessable files should be routed.
-        filename (str): The original filename (used in logs and error tracking).
     """
     bill_identifier = content.get("identifier")
     if not bill_identifier:
-        print("\u26a0\ufe0f Warning: Bill missing identifier")
+        print("⚠️ Warning: Bill missing identifier")
         record_error_file(
             error_folder,
             "from_handle_bill_missing_identifier",
@@ -33,12 +53,12 @@ def handle_bill(content, session_folder, output_folder, error_folder, filename):
         return
 
     save_path = Path(output_folder).joinpath(
-        "country:us",
-        "state:tx",
+        f"country:us",
+        f"state:{STATE_ABBR}",
         "sessions",
         "ocd-session",
-        "country:us",
-        "state:tx",
+        f"country:us",
+        f"state:{STATE_ABBR}",
         session_folder,
         "bills",
         bill_identifier,
@@ -54,7 +74,7 @@ def handle_bill(content, session_folder, output_folder, error_folder, filename):
         timestamp = None
 
     if not timestamp:
-        print(f"\u26a0\ufe0f Warning: Bill {bill_identifier} missing action dates")
+        print(f"⚠️ Warning: Bill {bill_identifier} missing action dates")
         timestamp = "unknown"
 
     # Save entire bill
@@ -62,8 +82,11 @@ def handle_bill(content, session_folder, output_folder, error_folder, filename):
     output_file = save_path.joinpath("logs", full_filename)
     with open(output_file, "w", encoding="utf-8") as f:
         json.dump(content, f, indent=2)
-    print(f"✅ [tx] Saved bill {bill_identifier}")
+    print(f"✅ Saved bill {bill_identifier}")
 
     # Save each action as a separate file
     if actions:
         write_action_logs(actions, bill_identifier, save_path / "logs")
+
+    # Download associated bill PDFs
+    download_bill_pdf(content, save_path / "files")

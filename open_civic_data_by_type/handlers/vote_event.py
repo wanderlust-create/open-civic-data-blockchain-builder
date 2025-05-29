@@ -1,18 +1,18 @@
 from pathlib import Path
 import json
 
-from utils.file_utils import (
-    record_error_file,
-    write_vote_event_log,
-)
+from utils.file_utils import format_timestamp, record_error_file, write_vote_event_log
 
 
-def handle_vote_event(content, session_folder, output_folder, error_folder, filename):
+def handle_vote_event(STATE_ABBR, content, session_folder, output_folder, error_folder, filename):
     """
     Handles a vote_event JSON file by:
 
     1. Creating the associated bill folder (and placeholder if missing)
     2. Saving the full vote_event as a timestamped log file using result info
+       Format: YYYYMMDDT000000Z_vote_event_<result>.json
+
+    Skips and logs errors if bill_identifier is missing.
 
     Args:
         content (dict): Parsed JSON vote event.
@@ -34,10 +34,12 @@ def handle_vote_event(content, session_folder, output_folder, error_folder, file
         return
 
     save_path = Path(output_folder).joinpath(
-        "country:us",
+        f"country:us",
+        f"state:{STATE_ABBR}",
         "sessions",
         "ocd-session",
-        "country:us",
+        f"country:us",
+        f"state:{STATE_ABBR}",
         session_folder,
         "bills",
         referenced_bill_id,
@@ -45,6 +47,7 @@ def handle_vote_event(content, session_folder, output_folder, error_folder, file
     (save_path / "logs").mkdir(parents=True, exist_ok=True)
     (save_path / "files").mkdir(parents=True, exist_ok=True)
 
+    # Add placeholder if bill doesn't exist
     placeholder_file = save_path / "placeholder.json"
     if not placeholder_file.exists():
         placeholder_content = {"identifier": referenced_bill_id, "placeholder": True}
@@ -52,7 +55,8 @@ def handle_vote_event(content, session_folder, output_folder, error_folder, file
             json.dump(placeholder_content, f, indent=2)
         print(f"📝 Created placeholder for missing bill {referenced_bill_id}")
 
+    # Save the full vote_event log
     write_vote_event_log(content, referenced_bill_id, save_path / "logs")
     print(
-        f"✅ [usa] Saved vote event {content.get('_id', 'unknown_id')} under bill {referenced_bill_id}"
+        f"✅ Saved vote event {content.get('_id', 'unknown_id')} under bill {referenced_bill_id}"
     )
