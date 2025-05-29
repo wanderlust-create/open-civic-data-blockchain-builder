@@ -8,7 +8,7 @@ from utils.process_utils import process_and_save
 from postprocessors.event_linker import attach_events_to_bills
 
 # Define state abbreviation and paths
-STATE_ABBR = "usa"
+STATE_ABBR = "il"
 BASE_FOLDER = Path(__file__).parent
 INPUT_FOLDER = BASE_FOLDER / "scraped_state_data" / STATE_ABBR
 DATA_OUTPUT = BASE_FOLDER / "data_output" / STATE_ABBR
