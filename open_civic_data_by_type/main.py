@@ -8,7 +8,7 @@ from utils.process_utils import process_and_save
 from postprocessors.event_linker import attach_events_to_bills
 
 # Define state abbreviation and paths
-STATE_ABBR = "il"
+STATE_ABBR = "usa"
 BASE_FOLDER = Path(__file__).parent
 INPUT_FOLDER = BASE_FOLDER / "scraped_state_data" / STATE_ABBR
 DATA_OUTPUT = BASE_FOLDER / "data_output" / STATE_ABBR
@@ -39,19 +39,18 @@ def main():
 
     # 5. Link archived event logs to bill folders based on references
     print("\n🔗 Linking event references to related bills...")
-
-
-attach_events_to_bills(
-    event_folder=EVENT_ARCHIVE_FOLDER,
-    bill_folder=OUTPUT_FOLDER
-    / f"country:us"
-    / f"state:{STATE_ABBR}"
-    / "sessions"
-    / "ocd-session"
-    / f"country:us"
-    / f"state:{STATE_ABBR}"
-    / "bills",
-)
+    attach_events_to_bills(
+        event_folder=EVENT_ARCHIVE_FOLDER,
+        bill_folder=OUTPUT_FOLDER
+        / f"country:us"
+        / f"state:{STATE_ABBR}"
+        / "sessions"
+        / "ocd-session"
+        / f"country:us"
+        / f"state:{STATE_ABBR}"
+        / "bills",
+        missing_session_folder=ERROR_FOLDER / "missing_session",
+    )
 
 
 if __name__ == "__main__":
