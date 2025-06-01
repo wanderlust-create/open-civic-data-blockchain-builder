@@ -1,10 +1,10 @@
 from pathlib import Path
 import json
 
-from utils.file_utils import format_timestamp, record_error_file, write_vote_event_log
+from utils.file_utils import record_error_file, write_vote_event_log
 
 
-def handle_vote_event(STATE_ABBR, content, session_folder, output_folder, error_folder, filename):
+def handle_vote_event(STATE_ABBR, content, session_name, output_folder, error_folder, filename):
     """
     Handles a vote_event JSON file by:
 
@@ -16,7 +16,7 @@ def handle_vote_event(STATE_ABBR, content, session_folder, output_folder, error_
 
     Args:
         content (dict): Parsed JSON vote event.
-        session_folder (str): Folder name for the legislative session.
+        session_name (str): Folder name for the legislative session.
         output_folder (Path): Base path for processed output.
         error_folder (Path): Base path for logging unprocessable files.
         filename (str): Original filename (used in logs).
@@ -40,7 +40,7 @@ def handle_vote_event(STATE_ABBR, content, session_folder, output_folder, error_
         "ocd-session",
         f"country:us",
         f"state:{STATE_ABBR}",
-        session_folder,
+        session_name,
         "bills",
         referenced_bill_id,
     )
