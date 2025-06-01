@@ -8,7 +8,7 @@ from utils.process_utils import process_and_save
 from postprocessors.event_bill_linker import link_events_to_bills_pipeline
 
 # Define state abbreviation and paths
-STATE_ABBR = "co"
+STATE_ABBR = "usa"
 BASE_FOLDER = Path(__file__).parent
 INPUT_FOLDER = BASE_FOLDER / "scraped_state_data" / STATE_ABBR
 DATA_OUTPUT = BASE_FOLDER / "data_output" / STATE_ABBR
@@ -35,8 +35,8 @@ def main():
         INPUT_FOLDER, EVENT_ARCHIVE_FOLDER, DATA_NOT_PROCESSED_FOLDER
     )
 
-    # 4. Route and process by handler
-    process_and_save(
+    # 4. Route and process by handler (returns counts)
+    counts = process_and_save(
         STATE_ABBR,
         all_json_files,
         DATA_NOT_PROCESSED_FOLDER,
@@ -47,7 +47,7 @@ def main():
 
     # 5. Link archived event logs to bill folders based on references
     if EVENT_ARCHIVE_FOLDER.exists():
-        print("\n🔗 Linking event references to related bills...")
+        print("Linking event references to related bills...")
         link_events_to_bills_pipeline(
             STATE_ABBR,
             EVENT_ARCHIVE_FOLDER,
@@ -59,6 +59,10 @@ def main():
         print(
             f"⚠️ Event archive folder {EVENT_ARCHIVE_FOLDER} does not exist. Skipping event linking.\n🚀 Processing complete."
         )
+    print("Processing summary:")
+    print(f"Bills saved: {counts.get('bills', 0)}")
+    print(f"Events saved: {counts.get('events', 0)}")
+    print(f"Vote events saved: {counts.get('votes', 0)}")
 
 
 if __name__ == "__main__":
