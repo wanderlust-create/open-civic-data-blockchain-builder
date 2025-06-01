@@ -2,7 +2,6 @@ from pathlib import Path
 import json
 import re
 from utils.file_utils import record_error_file, format_timestamp
-
 def clean_event_name(name: str) -> str:
     return re.sub(r"[^\w]+", "_", name.lower()).strip("_")[:40]
 
@@ -30,7 +29,8 @@ def handle_event(
             content,
             original_filename=filename,
         )
-        return
+        return False
+
     timestamp = format_timestamp(start_date)
     event_name = content.get("name", "event")
     short_name = clean_event_name(event_name)
@@ -56,3 +56,4 @@ def handle_event(
         json.dump(content, f, indent=2)
 
     print(f"✅ Saved event: {referenced_bill_id}")
+    return True
