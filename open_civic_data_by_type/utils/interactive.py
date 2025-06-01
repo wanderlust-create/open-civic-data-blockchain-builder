@@ -2,8 +2,7 @@ import os
 import shutil
 from pathlib import Path
 
-
-def clear_output_folder(output_folder):
+def clear_DATA_OUTPUT_FOLDER(output_folder):
     """
     Interactively clears the given output folder after confirming with the user.
     Accepts common positive confirmations: yes, y, yeah, sure, ok.
@@ -29,7 +28,6 @@ def clear_output_folder(output_folder):
             print("🛑 Aborted clearing output folder.")
     else:
         print("❌ Path does not exist — skipping deletion.")
-
 
 def prompt_for_session_fix(filename, original_session_name, log_path=None):
     """
