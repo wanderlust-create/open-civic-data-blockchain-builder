@@ -1,4 +1,3 @@
-from datetime import datetime
 from pathlib import Path
 
 from utils.io_utils import load_json_files
@@ -8,7 +7,7 @@ from utils.process_utils import process_and_save
 from postprocessors.event_bill_linker import link_events_to_bills_pipeline
 
 # Define state abbreviation and paths
-STATE_ABBR = "usa"
+STATE_ABBR = "ga"
 BASE_FOLDER = Path(__file__).parent
 INPUT_FOLDER = BASE_FOLDER / "scraped_state_data" / STATE_ABBR
 DATA_OUTPUT = BASE_FOLDER / "data_output" / STATE_ABBR
@@ -61,8 +60,9 @@ def main():
         )
     print("Processing summary:")
     print(f"Bills saved: {counts.get('bills', 0)}")
-    print(f"Events saved: {counts.get('events', 0)}")
     print(f"Vote events saved: {counts.get('votes', 0)}")
+    # TO delete later if not needed
+    print(f"Events saved: {counts.get('events', 0)}")
 
 
 if __name__ == "__main__":
