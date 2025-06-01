@@ -1,6 +1,6 @@
 # Open Civic Data Blockchain Builder
 
-This project parses civic legislative JSON files and saves them into a blockchain-style folder structure for versioned, transparent archival.
+This project parses OpenStates-style legislative JSON files and saves them into a blockchain-style folder structure for versioned, transparent archival.
 
 🛠️ Built with modular Python, real-time error tracking, and interactive recovery prompts
 
@@ -8,11 +8,12 @@ This project parses civic legislative JSON files and saves them into a blockchai
 
 ## Features
 
+* Optional upload of source PDFs alongside bill processing (toggle enabled)
 * Saves each bill and vote event into timestamped `.json` files
 * Organizes output by session, chamber, and bill identifier
 * Logs every processing step to `data_processed/` and error cases to `data_not_processed/`
 * Auto-creates placeholder files when votes reference missing bills
-* Prompts user for missing legislative\_session (optional toggle), enabling real-time error correction without restarting the script
+* Prompts user for missing `legislative_session` (optional toggle), enabling real-time error correction without restarting the script
 * Tracks new sessions entered via prompt in `new_sessions_added.txt`
 * Modular file structure using `handlers/`, `utils/`, and per-state `blockchain/{state}` folders
 
@@ -21,33 +22,30 @@ This project parses civic legislative JSON files and saves them into a blockchai
 ## Project Structure
 
 ```plaintext
-open_civic_data_blockchain/
-├── blockchain/                 # State-specific logic (TX, IL, etc.)
-│   └── tx/
-│       ├── bills.py
-│       ├── votes.py
-│       ├── events.py
-│       ├── session_index.py
-│       ├── organizations.py
-│       └── jurisdiction.py
-├── data_output/                # Created dynamically per run
-│   └── tx/
-│       ├── data_processed/
-│       │   └── country:us/state:tx/sessions/ocd-session/...
-│       └── data_not_processed/
-│           └── from_<error_context>/...
-├── handlers/                   # Templates for copying into each state
-│   ├── bill_template.py
-│   ├── vote_event_template.py
-│   └── other_template.py
-├── sample_scraped_data/
-│   ├── il/
-│   └── tx/
-├── utils/
+open_civic_data_by_type/
+├── bill_session_mapping/           # Session-to-bill mappings
+├── data_output/                    # Output destination for processed and error files
+├── handlers/                       # Core bill, vote_event, and event handlers
+│   ├── bill.py
+│   ├── vote_event.py
+│   └── event.py
+├── postprocessors/
+│   ├── event_bill_linker.py        # Links events to associated bills
+│   └── helpers/                    # Post-processing tools
+│       ├── extract_bill_ids_from_event.py
+│       ├── find_session_from_bill_id.py
+│       ├── load_bill_to_session_mapping.py
+│       └── run_handle_event.py
+├── scraped_state_data/            # Raw input files
+├── sessions/                      # Session metadata or references
+├── utils/                         # Utility modules for file I/O, processing, interactivity
 │   ├── file_utils.py
-│   └── interactive.py
-├── main.py                     # Entry point
-└── README.md
+│   ├── interactive.py
+│   ├── io_utils.py
+│   ├── merge_session_log.py
+│   └── process_utils.py
+├── .gitignore
+└── main.py
 ```
 
 ---
@@ -88,6 +86,11 @@ data_output/
 
 ## Getting Started
 
+### ⚙️ Configuration Notes
+
+* To enable PDF uploads, set the `UPLOAD_PDFS = True` toggle in your configuration or state module.
+* For automated environments, set `SKIP_DELETE_PROMPT = True` to disable prompts when clearing output directories.
+
 1. Ensure you have **Python 3.9+**
 2. Clone the repo
 3. Add your scraped `.json` files to `sample_scraped_data/{state}/`
@@ -98,7 +101,7 @@ Run the pipeline:
 python main.py
 ```
 
-You'll be prompted before clearing output directories. Missing sessions will prompt for manual mapping and be saved to `new_sessions_added.txt`.
+By default, you'll be prompted before clearing output directories. In automation, this can be disabled by setting `SKIP_DELETE_PROMPT = True`. Missing sessions will prompt for manual mapping and be saved to `new_sessions_added.txt`.
 
 ---
 
