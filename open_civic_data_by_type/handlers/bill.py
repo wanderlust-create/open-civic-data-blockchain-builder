@@ -29,7 +29,7 @@ def download_bill_pdf(content, files_dir):
 
 
 def handle_bill(
-    STATE_ABBR, content, session_folder, output_folder, error_folder, filename
+    STATE_ABBR, content, session_name, output_folder, error_folder, filename
 ):
     """
     Handles a bill JSON file by saving:
@@ -59,7 +59,7 @@ def handle_bill(
         "ocd-session",
         f"country:us",
         f"state:{STATE_ABBR}",
-        session_folder,
+        session_name,
         "bills",
         bill_identifier,
     )
