@@ -2,10 +2,13 @@ import os
 import shutil
 from pathlib import Path
 
+SKIP_DELETE_PROMPT = True  # Toggle True to disable interactive prompt (for automation)
+
+
 def clear_DATA_OUTPUT_FOLDER(output_folder):
     """
-    Interactively clears the given output folder after confirming with the user.
-    Accepts common positive confirmations: yes, y, yeah, sure, ok.
+    Clears the given output folder after user confirmation,
+    unless SKIP_DELETE_PROMPT is set to True.
     """
     POSITIVE_RESPONSES = {"yes", "y", "yeah", "sure", "ok"}
 
@@ -14,20 +17,25 @@ def clear_DATA_OUTPUT_FOLDER(output_folder):
     )
     if os.path.exists(output_folder):
         print("✅ Path exists — proceeding to delete.")
-        confirm = (
-            input(
-                f"⚠️ This will delete everything in {output_folder}. Are you sure? (yes/no): "
-            )
-            .strip()
-            .lower()
-        )
-        if confirm in POSITIVE_RESPONSES:
+        if SKIP_DELETE_PROMPT:
             shutil.rmtree(output_folder)
-            print(f"🧹 Cleared existing output folder: {output_folder}")
+            print(f"🧹 Cleared existing output folder (auto mode): {output_folder}")
         else:
-            print("🛑 Aborted clearing output folder.")
+            confirm = (
+                input(
+                    f"⚠️ This will delete everything in {output_folder}. Are you sure? (yes/no): "
+                )
+                .strip()
+                .lower()
+            )
+            if confirm in POSITIVE_RESPONSES:
+                shutil.rmtree(output_folder)
+                print(f"🧹 Cleared existing output folder: {output_folder}")
+            else:
+                print("🛑 Aborted clearing output folder.")
     else:
         print("❌ Path does not exist — skipping deletion.")
+
 
 def prompt_for_session_fix(filename, original_session_name, log_path=None):
     """
