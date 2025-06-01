@@ -8,10 +8,15 @@ __pycache__/
 env/
 venv/
 
-# Data directories (you can keep these local only)
-*.log
-scraped_state_data
-data_output/
+# Ignore all contents of these folders
+scraped_state_data/*
+data_output/*
+sessions/*
+
+# But don’t ignore the folders themselves
+!scraped_state_data/.gitkeep
+!data_output/.gitkeep
+!sessions/.gitkeep
 
 # OS / Editor files
 .DS_Store
@@ -33,4 +38,3 @@ new_sessions_added.txt
 # Zips or temp files
 *.zip
 *.tmp
-
