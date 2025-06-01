@@ -55,4 +55,4 @@ def handle_event(
     with open(output_file, "w", encoding="utf-8") as f:
         json.dump(content, f, indent=2)
 
-    print(f"✅ Saved event: {event_id}")
+    print(f"✅ Saved event: {referenced_bill_id}")
