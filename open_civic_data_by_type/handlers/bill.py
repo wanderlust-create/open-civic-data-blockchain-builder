@@ -1,31 +1,39 @@
 from pathlib import Path
 import json
+import re
 import requests
+from urllib.parse import urlparse
 
 from utils.file_utils import format_timestamp, record_error_file, write_action_logs
 
 
-def download_bill_pdf(content, files_dir):
-    documents = content.get("documents", [])
-    for doc in documents:
-        url = doc.get("url")
-        if url and url.endswith(".pdf"):
-            try:
-                response = requests.get(url, timeout=10)
-                if response.status_code == 200:
-                    filename = (
-                        doc.get("note", "bill_document").replace(" ", "_").lower()
-                        + ".pdf"
-                    )
-                    with open(files_dir / filename, "wb") as f:
-                        f.write(response.content)
-                    print(f"📄 Downloaded PDF: {filename}")
-                else:
-                    print(
-                        f"⚠️ Failed to download PDF: {url} (status {response.status_code})"
-                    )
-            except Exception as e:
-                print(f"❌ Error downloading PDF: {url} ({e})")
+def download_bill_pdf(content, save_path, bill_identifier):
+    versions = content.get("versions", [])
+    if not versions:
+        print("⚠️ No versions found for bill")
+        return
+
+    files_dir = save_path / "files"
+    files_dir.mkdir(parents=True, exist_ok=True)
+
+    for version in versions:
+        for link in version.get("links", []):
+            url = link.get("url")
+            if url and url.endswith(".pdf"):
+                try:
+                    response = requests.get(url, timeout=10)
+                    if response.status_code == 200:
+                        filename = f"{bill_identifier}.pdf"
+                        file_path = files_dir / filename
+                        with open(file_path, "wb") as f:
+                            f.write(response.content)
+                        print(f"📄 Downloaded PDF: {filename}")
+                    else:
+                        print(
+                            f"⚠️ Failed to download PDF: {url} (status {response.status_code})"
+                        )
+                except Exception as e:
+                    print(f"❌ Error downloading PDF: {url} ({e})")
 
 
 def handle_bill(
@@ -36,10 +44,15 @@ def handle_bill(
 
     1. A full snapshot of the bill in logs/ using the earliest action date
     2. One separate JSON file per action in logs/, each timestamped and slugified
-    3. A files/ directory, with any linked PDFs downloaded
+    3. A files/ directory, with any linked PDFs downloaded (optional)
 
     Skips and logs errors if required fields (e.g. identifier) are missing.
+
+    Returns:
+        bool: True if saved successfully, False if skipped due to missing identifier.
     """
+    DOWNLOAD_PDFS = False  # Toggle PDF downloading here
+
     bill_identifier = content.get("identifier")
     if not bill_identifier:
         print("⚠️ Warning: Bill missing identifier")
@@ -50,7 +63,7 @@ def handle_bill(
             content,
             original_filename=filename,
         )
-        return
+        return False
 
     save_path = Path(output_folder).joinpath(
         f"country:us",
@@ -88,5 +101,8 @@ def handle_bill(
     if actions:
         write_action_logs(actions, bill_identifier, save_path / "logs")
 
-    # Download associated bill PDFs
-    download_bill_pdf(content, save_path / "files")
+    # Download associated bill PDFs if enabled
+    if DOWNLOAD_PDFS:
+        download_bill_pdf(content, save_path, bill_identifier)
+
+    return True
