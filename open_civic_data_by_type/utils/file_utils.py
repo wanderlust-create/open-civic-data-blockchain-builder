@@ -4,7 +4,6 @@ import json
 from pathlib import Path
 import requests
 
-
 def format_timestamp(date_str):
     try:
         dt = datetime.fromisoformat(date_str)
@@ -134,3 +133,22 @@ def write_vote_event_log(vote_event, bill_identifier, log_folder):
     output_file = Path(log_folder) / filename
     with open(output_file, "w", encoding="utf-8") as f:
         json.dump(vote_event, f, indent=2)
+
+        # utils/file_utils.py
+
+
+def list_json_files(folder: Path) -> list[Path]:
+    """
+    Returns all .json files in the given folder.
+
+    Args:
+        folder (Path): Directory to search.
+
+    Returns:
+        list[Path]: List of JSON file paths.
+    """
+    if not folder.exists() or not folder.is_dir():
+        return []
+
+    return sorted(folder.glob("*.json"))
+
