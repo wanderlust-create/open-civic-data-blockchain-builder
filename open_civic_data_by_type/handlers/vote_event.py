@@ -57,6 +57,4 @@ def handle_vote_event(STATE_ABBR, content, session_name, output_folder, error_fo
 
     # Save the full vote_event log
     write_vote_event_log(content, referenced_bill_id, save_path / "logs")
-    print(
-        f"✅ Saved vote event {content.get('_id', 'unknown_id')} under bill {referenced_bill_id}"
-    )
+    print(f"✅ Saved vote event for bill {referenced_bill_id}")
